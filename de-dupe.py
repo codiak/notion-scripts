@@ -3,8 +3,6 @@ De-Duplicate
 - Find duplicates based on set properties, and merge chosen properties
 """
 from notion_client import Client
-from bs4 import BeautifulSoup
-from urllib.request import urlopen
 from datetime import datetime
 import sys
 from utils import get_all_in_collection, get_property_value
