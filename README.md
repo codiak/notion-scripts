@@ -8,7 +8,7 @@ Add book covers from GoodReads to Notion.
 
 ### 1. First, import your GoodReads shelves into Notion
 
-After exporting your My Books from [GoodReads](https://www.goodreads.com/) (in the lefthand sidebar), upload the .csv file to a collection in Notion using the "Merge with CSV" option. Make sure after importing that books have a "Book ID" value, if they don't you may need to add a "Book ID" property to the collection before merging/importing.
+After exporting your My Books from [GoodReads](https://www.goodreads.com/) (in the lefthand sidebar), upload the .csv file to a collection in Notion using the "Merge with CSV" option. Make sure after importing that books have a "Book Id" value, if they don't you may need to add a "Book Id" property to the collection before merging/importing.
 
 ### 2. Create a Notion integration
 
