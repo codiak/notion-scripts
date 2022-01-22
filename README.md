@@ -6,7 +6,7 @@ Handy scripts to automate or integrate with Notion
 
 Add book covers from GoodReads to Notion.
 
-### 1. First, get your books in Notion
+### 1. First, import your GoodReads shelves into Notion
 
 After exporting your My Books from [GoodReads](https://www.goodreads.com/) (in the lefthand sidebar), upload the .csv file to a collection in Notion using the "Merge with CSV" option. Make sure after importing that books have a "Book ID" value, if they don't you may need to add a "Book ID" property to the collection before merging/importing.
 
@@ -32,3 +32,22 @@ Then run using:
 `python ./goodreads.py`
 
 To begin scraping cover image URLs from GoodReads.
+
+
+## de-dupe.py
+
+### 1. Add Notion integration secret and Database ID
+
+See `goodreads.py` steps for details.
+
+### 2. Choose settings
+
+Various variables are available to configure the de-dupe/merge process, such as `properties_to_match_on` and `prefer_oldest` - read through them carefully before beginning the script. Consider setting `max_number_to_merge` to handle one or two at a time and check the results first.
+
+### 3. Install dependencies, and run script!
+
+Make sure you have the dependencies installed:
+`pip install notion_client`
+
+Then run using:
+`python ./de-dupe.py`
