@@ -1,53 +1,49 @@
-
+"""
+GoodReads Cover Images
+- Script to fetch book covers from GoodReads, after importing .csv
+- Based on AmunRa1322's script https://github.com/AmunRa1322/Notion-Scripts
+"""
+import sys
 from notion_client import Client
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from utils import get_all_in_collection, get_property_value
 
-book_table = []
-goodreads_url = "https://www.goodreads.com/book/show/"
+"""
+Access Settings
+"""
 # TODO:
 # Create an Integration Token here:
 # https://www.notion.so/my-integrations
 # And invite the Integration app to the collection you want it to access
-client = Client(auth="ADD_INTEGRATION_SECRET")
-print('Getting data from Notion...')
-list_users_response = client.users.list()
-print("Accessing user: " + list_users_response["results"][0]["name"])
+client = Client(auth=">>ADD SECRET HERE<<")
+# TODO:
+# Find the database id by viewing the collection in your browser, and copying it from the URL:
+# https://www.notion.so/my_workspace/COPY_THIS_DATABASE_ID?v=another_string
+database_id = ">>ADD DATABASE ID HERE<<"
 
-page = client.databases.query(
-    **{
-        # TODO:
-        # Find the database id by viewing the collection in your browser, and copying it from the URL:
-        # https://www.notion.so/my_workspace/COPY_THIS_DATABASE_ID?v=another_string
-        "database_id": "ADD_DATABASE_ID",
-    }
-)
+"""
+Cover fetch options
+"""
+goodreads_url = "https://www.goodreads.com/book/show/"
 
-'''
-Example property format:
-'Publisher': {'id': 'BW%7C%3D',
-                'type': 'rich_text',
-                 'rich_text': [{'type': 'text',
-                              'text': {'content': 'Self-Realization Fellowship Publishers', 'link': None}
-'''
-def get_property_value(property):
-    if property:
-        type = property["type"]
-        sub_type = property[type][0]["type"]
-        return property[type][0][sub_type]["content"]
-    else:
-        return None
 
-for result in page['results']:
+book_table = []
+all_results = get_all_in_collection(client, database_id)
+
+for result in all_results:
     properties = result['properties']
     if "Book Id" in properties:
         book_id = get_property_value(properties["Book Id"])
-        title = get_property_value(properties["Title"])
-        # cover = get_property_value(properties["Cover"])
-        print(f'Found book {book_id}')
-        case = { 'id': result['id'], 'Book_Id': book_id, 'Image': result["cover"],
-                 'title': title }
-        book_table.append(case)
+        if book_id:
+            title = get_property_value(properties["Title"])
+            case = { 'id': result['id'], 'Book_Id': book_id, 'Image': result["cover"],
+                    'title': title }
+            book_table.append(case)
+
+if len(book_table) == 0:
+    print('No items with property "Book Id" found. Did you import a csv from GoodReads?')
+    sys.exit(0)
 
 print('Splitting the data into chunks of 10 elements...\n')
 
@@ -65,10 +61,10 @@ for idy, valA in enumerate(book_table):
     for idx, val in enumerate(valA):
         if not val['Image']:
             url = goodreads_url + str(val['Book_Id'])
-            url_open = urlopen(url)
-            soup = BeautifulSoup(url_open, 'html.parser')
-            tag = soup.find("img", {"id": "coverImage"})
             try:
+                url_open = urlopen(url)
+                soup = BeautifulSoup(url_open, 'html.parser')
+                tag = soup.find("img", {"id": "coverImage"})
                 img = tag['src']
                 print(f'Updating image for: {val["title"]}')
                 client.pages.update(
