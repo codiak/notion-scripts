@@ -129,17 +129,16 @@ for result in all_results:
         if simple_dict['MATCH_ON'] == other['MATCH_ON']:
             print('\nFound duplicate!')
             print(simple_dict['MATCH_ON'])
-            if prefer_oldest:
-                a = simple_dict['RESULT']
-                b = other['RESULT']
-                if simple_dict['COMPARE_DATE'] > other['COMPARE_DATE']:
-                    a, b = b, a
-                    already_deleted = True
-                # Make update request (also updates local values)
-                merge_update_item(result, other['RESULT'])
-                # Make archive request (also updates local values)
-                delete_item(b['id'])
-                merge_count += 1
+            a = simple_dict['RESULT']
+            b = other['RESULT']
+            if (simple_dict['COMPARE_DATE'] > other['COMPARE_DATE']) == prefer_oldest:
+                a, b = b, a
+                already_deleted = True
+            # Make update request (also updates local values)
+            merge_update_item(result, other['RESULT'])
+            # Make archive request (also updates local values)
+            delete_item(b['id'])
+            merge_count += 1
             if merge_count >= max_number_to_merge:
                 sys.exit(0)
     # Build table
